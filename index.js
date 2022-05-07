@@ -36,6 +36,20 @@ async function run(){
             res.send(result)
         })
 
+        app.put('/products/:id', async(req, res) => {
+            const id = req.params.id;
+            const updatedQuantity = req.body.stock;
+            const filter = { _id: ObjectId(id) }
+            const options = { upsert: true }
+            const updatedProduct = {
+                $set: {
+                    stock: updatedQuantity
+                }
+            }
+            const result = await productsCollection.updateOne(filter, updatedProduct, options)
+            res.send(result)
+        })
+
         app.get('/products/:id', async (req, res) => {
             const id = req.params.id
             const query = { _id: ObjectId(id) }
