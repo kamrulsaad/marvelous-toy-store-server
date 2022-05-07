@@ -1,7 +1,7 @@
 import express from "express";
 import cors from 'cors'
 import 'dotenv/config'
-import { MongoClient, ServerApiVersion } from 'mongodb'
+import { MongoClient, ObjectId, ServerApiVersion } from 'mongodb'
 const port = process.env.PORT || 5000
 const app = express()
 
@@ -23,10 +23,23 @@ async function run(){
             res.send(products)
         })
 
+        app.post('/products', async(req, res) => {
+            const newProduct = req.body
+            const result = productsCollection.insertOne(newProduct)
+            res.send(result)
+        })
+
+        app.delete('/products/:id', async (req, res) => {
+            const id = req.params.id
+            const query = { _id: ObjectId(id) }
+            const result = await productsCollection.deleteOne(query)
+            res.send(result)
+        })
+
         app.get('/products/:id', async (req, res) => {
-            const id = parseInt(req.params.id)
-            const query = { index: id }
-            const productById = await productsCollection.findOne(query);
+            const id = req.params.id
+            const query = { _id: ObjectId(id) }
+            const productById = await productsCollection.findOne(query)
             res.send(productById)
         })
     }
