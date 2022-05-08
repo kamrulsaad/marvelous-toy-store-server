@@ -27,6 +27,7 @@ async function run() {
     await client.connect()
     const productsCollection = client.db('toyStore').collection('products')
     const userAddedItemsCollection = client.db('toyStore').collection('userAddedProducts')
+    const blogsCollection = client.db('toyStore').collection('blogs')
 
     try {
         app.get('/products', async (req, res) => {
@@ -68,6 +69,13 @@ async function run() {
             const query = { _id: ObjectId(id) }
             const productById = await productsCollection.findOne(query)
             res.send(productById)
+        })
+
+        app.get('/blogs', async(req, res) => {
+            const query = {}
+            const cursor = blogsCollection.find(query)
+            const blogs = await cursor.toArray()
+            res.send(blogs)
         })
 
         app.post('/myItems', async (req, res) => {
